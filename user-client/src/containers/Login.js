@@ -19,13 +19,15 @@ export default function Login() {
                 const users = response.data;
                 const foundUser = users.data.find(user => user.username === username && user.password === password);
                 console.log(foundUser);
-                const isAdmin = foundUser.hasOwnProperty("isAdmin") && foundUser["isAdmin"] === 1;
-                console.log(isAdmin);
-                if (isAdmin && foundUser) {
-                    console.log("foundAdmin");
-                }
-                else if (foundUser) {
-                    console.log("foundUser");
+                if (foundUser) {
+                    const isAdmin = foundUser.hasOwnProperty("isAdmin") && foundUser["isAdmin"] === 1;
+                    console.log(isAdmin);
+                    if (isAdmin) {
+                        console.log("foundAdmin");
+                    }
+                    else {
+                        console.log("foundUser");
+                    }
                 } else {
                     console.log("notFound");
                     alert("Incorrect username or password. Please try again.");
