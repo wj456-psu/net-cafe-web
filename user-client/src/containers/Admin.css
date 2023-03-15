@@ -1,0 +1,70 @@
+/* Set up the container for the data and top-up section */
+.container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  
+  /* Style the data boxes */
+  .data-box {
+    box-sizing: border-box;
+    width: 33.33%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+    background-color: #1d1d1d;
+    color: #fff;
+  }
+  
+  /* Style the top-up section */
+  .top-up {
+    background-color: #7b55c1;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+  }
+  
+  /* Style the input fields and button in the top-up section */
+  input[type="text"],
+  input[type="number"] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #333;
+  }
+  
+  button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  button:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+  
+  /* Set up the layout for the page */
+  @media (max-width: 768px) {
+    .data-box {
+      width: 50%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .data-box {
+      width: 100%;
+    }
+  }
+  
