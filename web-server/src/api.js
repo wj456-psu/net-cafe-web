@@ -8,169 +8,140 @@ router.use(express.urlencoded({ extended: true }));
 router.get("/devices", (req, res) => {
   const sql = "SELECT * FROM devices";
   const params = [];
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      res.status(400).json({ "error": err.message });
-      return;
-    }
-    res.json({ "message": "success", "data": rows });
-  });
+  const devices = db.prepare(sql).all(params);
+  res.json({ "message": "success", "data": devices });
 });
 
 router.get("/device/:id", (req, res) => {
   const sql = "SELECT * FROM devices WHERE id = ?";
   const params = [req.params.id];
-  db.get(sql, params, (err, row) => {
-    if (err) {
-      res.status(400).json({ "error": err.message });
-      return;
-    }
-    if (!row) {
-      res.status(404).json({ "message": "No device found with the specified ID" });
-      return;
-    }
-    res.json({ "message": "success", "data": row });
-  });
+  const device = db.prepare(sql).get(params);
+  if (!device) {
+    res.status(404).json({ "error": "No device found with the specified id" });
+    return;
+  }
+  res.json({ "message": "success", "data": device });
 });
 
 router.get("/users", (req, res) => {
   const sql = "SELECT * FROM users";
   const params = [];
-  db.all(sql, params, (err, rows) => {
-    if (err) {
-      res.status(400).json({ "error": err.message });
-      return;
-    }
-    res.json({ "message": "success", "data": rows });
-  });
+  const users = db.prepare(sql).all(params);
+  res.json({ "message": "success", "data": users });
 });
 
-router.get("/user/id/:id", (req, res) => {
-  const sql = "SELECT * FROM users WHERE id = ?";
-  const params = [req.params.id];
-  db.get(sql, params, (err, row) => {
-    if (err) {
-      res.status(400).json({ "error": err.message });
-      return;
-    }
-    if (!row) {
-      res.status(404).json({ "message": "No user found with the specified id" });
-      return;
-    }
-    res.json({ "message": "success", "data": row });
-  });
-});
-
-router.get("/user/name/:name", (req, res) => {
-  const sql = "SELECT * FROM users WHERE name = ?";
+router.get("/user/:name", (req, res) => {
+  const sql = "SELECT * FROM users WHERE username = ?";
   const params = [req.params.name];
-  db.get(sql, params, (err, row) => {
-    if (err) {
-      res.status(400).json({ "error": err.message });
-      return;
-    }
-    if (!row) {
-      res.status(404).json({ "message": "No user found with the specified name" });
-      return;
-    }
-    res.json({ "message": "success", "data": row });
-  });
+  const user = db.prepare(sql).get(params);
+  if (!user) {
+    res.status(404).json({ "error": "No user found with the specified username" });
+    return;
+  }
+  res.json({ "message": "success", "data": user });
 });
 
 router.post("/user", (req, res) => {
   const errors = [];
-  if (!req.body.name) {
+  if (!req.body.username) {
     errors.push("No name specified");
   }
   if (!req.body.password) {
     errors.push("No password specified");
   }
   if (errors.length) {
-    res.status(400).json({ "error": errors.join(",") });
+    res.status(400).json({ "error": errors.join(", ") });
     return;
   }
   const data = {
-    name: req.body.name,
-    password: req.body.password
+    name: req.body.username.toString(),
+    password: req.body.password.toString()
   }
-  const sql = "INSERT INTO users (name, password) VALUES (?, ?)";
+  const sql = "INSERT INTO users (username, password) VALUES (?, ?)";
   const params = [data.name, data.password];
-  db.run(sql, params, function (err, result) {
-    if (err) {
-      res.status(400).json({ "error": err.message });
-      return;
-    }
+  try {
+    db.prepare(sql).run(params);
     res.json({
       "message": "success",
       "data": data,
-      "id": this.lastID
     });
-  });
+  } catch (err) {
+    res.status(400).json({ "error": err.message });
+    return;
+  }
 });
 
-router.put("/user/:id", (req, res) => {
+router.put("/user/:name", (req, res) => {
   const data = {
-    name: req.body.name,
     password: req.body.password,
     balance: req.body.balance
   }
-  db.run(
-    `UPDATE users SET
-      name = COALESCE(?, name),
+  console.log(data)
+  const isEmpty = Object.values(data).every(x => x === undefined);
+  if (isEmpty) {
+    res.status(400).json({ "error": "No key specified" });
+    return;
+  }
+  if (data.password) {
+    data.password = data.password.toString();
+  }
+  if (data.balance) {
+    data.balance = parseFloat(data.balance);
+  }
+  const sql = `UPDATE users SET
       password = COALESCE(?, password),
       balance = COALESCE(?, balance)
-      WHERE id = ?`,
-    [data.name, data.password, data.balance, req.params.id],
-    function (err, result) {
-      if (err) {
-        res.status(400).json({ "error": err.message });
-        return;
-      }
-      res.json({
-        "message": "success",
-        "data": data,
-        "changes": this.changes
-      });
-    }
-  );
+      WHERE username = ?`;
+  const params = [data.password, data.balance, req.params.name];
+  const info = db.prepare(sql).run(params);
+  res.json({
+    "message": "success",
+    "data": data,
+    "changes": info.changes
+  });
 });
 
-router.delete("/user/:id", (req, res) => {
-  db.run(
-    "DELETE FROM users WHERE id = ?",
-    req.params.id,
-    function (err, result) {
-      if (err) {
-        res.status(400).json({ "error": res.message })
-        return;
-      }
-      res.json({ "message": "deleted", "changes": this.changes })
+router.delete("/user/:name", (req, res) => {
+  const sql = "DELETE FROM users WHERE username = ?";
+  const params = [req.params.name];
+  const info = db.prepare(sql).run(params);
+  if (info.changes === 0) {
+    res.status(404).json({ "error": "No user found with the specified username" });
+    return;
+  }
+  res.json({
+    "message": "deleted",
+    "changes": info.changes
+  });
+});
+
+router.post("/device/:id", (req, res) => {
+  if (!req.body.username) {
+    res.status(400).json({ "error": "Missing required parameter" });
+    return;
+  }
+  const sql =
+    `UPDATE devices SET
+      used = 'TRUE',
+      username = ?
+      WHERE id = ? `;
+  const data = {
+    name: req.body.username.toString(),
+    id: req.params.id
+  }
+  const params = [data.name, data.id];
+  try {
+    db.prepare(sql).run(params);
+    res.json({
+      "message": "success",
+      "data": { "device_id": data.id, "used_by": data.name }
     });
-});
-
-router.post("/device/:d_id/user/:u_id", (req, res) => {
-  db.run(
-    "PRAGMA foreign_keys = ON", function (err, result) {
-      if (err) throw err;
-      db.run(
-        `UPDATE devices SET
-          used = 'TRUE',
-          used_by = ?
-          WHERE id = ? `,
-        [req.params.u_id, req.params.d_id],
-        function (err, result) {
-          if (err) {
-            res.status(400).json({ "error": err.message });
-            return;
-          }
-          res.json({
-            "message": "success",
-            "data": { "device_id": req.params.d_id, "used_by": req.params.u_id }
-          });
-        }
-      );
+  } catch (err) {
+    if (err.message === "FOREIGN KEY constraint failed") {
+      res.status(400).json({ "error": "No user: " + data.name });
+      return;
     }
-  );
+  }
 });
 
 module.exports = router
