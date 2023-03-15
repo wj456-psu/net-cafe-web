@@ -11,6 +11,7 @@ try {
             username TEXT,
             password TEXT,
             balance REAL DEFAULT 0,
+            isAdmin INTEGER,
             PRIMARY KEY(username)
         )`).run();
 } catch (err) { }
@@ -36,6 +37,15 @@ try {
         [4, "dddd", "FALSE"],
         [5, "eeee", "FALSE"],
         [6, "ffff", "FALSE"],
+    ]);
+} catch (err) { }
+const insertAdmin = db.prepare(`INSERT INTO users (username, password, isAdmin) VALUES (?, ?, ?)`);
+const insertAdmins = db.transaction((admins) => {
+    for (const admin of admins) insertAdmin.run(admin);
+});
+try {
+    insertAdmins([
+        ["Uan", "admin", "TRUE"],
     ]);
 } catch (err) { }
 
