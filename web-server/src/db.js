@@ -11,7 +11,7 @@ try {
             username TEXT,
             password TEXT,
             balance REAL DEFAULT 0,
-            isAdmin INTEGER,
+            isAdmin INTEGER DEFAULT FALSE,
             PRIMARY KEY(username)
         )`).run();
 } catch (err) { }
@@ -45,7 +45,7 @@ const insertAdmins = db.transaction((admins) => {
 });
 try {
     insertAdmins([
-        ["Uan", "admin", "TRUE"],
+        ["Uan", "admin", 1],
     ]);
 } catch (err) { }
 
