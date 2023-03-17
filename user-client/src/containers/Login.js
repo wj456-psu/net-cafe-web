@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import "./Login.css";
-import axios from "axios"
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     function validateForm() {
         return username.length > 0 && password.length > 0;
@@ -18,15 +20,16 @@ export default function Login() {
             .then(response => {
                 const users = response.data;
                 const foundUser = users.data.find(user => user.username === username && user.password === password);
-                console.log(foundUser);
                 const isAdmin = foundUser.hasOwnProperty("isAdmin") && foundUser["isAdmin"] === 1;
-                console.log(isAdmin);
                 if (isAdmin && foundUser) {
                     console.log("foundAdmin");
+                    navigate("/Admin");
                 }
                 else if (foundUser) {
                     console.log("foundUser");
-                } else {
+                    navigate(`/User/${username}`);
+                } 
+                else {
                     console.log("notFound");
                     alert("Incorrect username or password. Please try again.");
                 }
