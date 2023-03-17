@@ -43,7 +43,13 @@ router.get("/user/:name", (req, res) => {
   if (!used) {
     res.json({ "message": "success", "data": user });
   } else {
-    res.json({ "message": "success", "data": { user, "using": { "id": used.id, "time_remained": used.time_remained } } });
+    res.json({
+      "message": "success", "data": {
+        "username": user.username, "password": user.password,
+        "balance": user.balance, "isAdmin": user.isAdmin,
+        "id": used.id, "time_remained": used.time_remained
+      }
+    });
   }
 });
 
