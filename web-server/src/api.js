@@ -178,7 +178,6 @@ router.post("/good", (req, res) => {
 
 router.put("/device/:id", (req, res) => {
   const data = {
-    password: req.body.password,
     used: req.body.used,
     user: req.body.username,
     time: req.body.time_remained
@@ -198,12 +197,11 @@ router.put("/device/:id", (req, res) => {
   if (data.user) {
     data.user = JSON.parse(data.user);
     const sql = `UPDATE devices SET
-      password = COALESCE(?, password),
       used = COALESCE(?, used),
       username = ?,
       time_remained = COALESCE(?, time_remained)
       WHERE id = ?`;
-    const params = [data.password, data.used, data.user, data.time, req.params.id];
+    const params = [data.used, data.user, data.time, req.params.id];
     db.pragma("foreign_keys = OFF");
     const info = db.prepare(sql).run(params);
     db.pragma("foreign_keys = ON");
@@ -214,11 +212,10 @@ router.put("/device/:id", (req, res) => {
     });
   } else {
     const sql = `UPDATE devices SET
-      password = COALESCE(?, password),
       used = COALESCE(?, used),
       time_remained = COALESCE(?, time_remained)
       WHERE id = ?`;
-    const params = [data.password, data.used, data.time, req.params.id];
+    const params = [data.used, data.time, req.params.id];
     const info = db.prepare(sql).run(params);
     res.json({
       "message": "success",
