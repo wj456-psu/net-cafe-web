@@ -54,8 +54,8 @@ router.post("/user", (req, res) => {
     return;
   }
   const data = {
-    name: req.body.username.toString(),
-    password: req.body.password.toString()
+    name: req.body.username,
+    password: req.body.password
   }
   const sql = "INSERT INTO users (username, password) VALUES (?, ?)";
   const params = [data.name, data.password];
@@ -81,9 +81,6 @@ router.put("/user/:name", (req, res) => {
   if (isEmpty) {
     res.status(400).json({ "error": "No key specified" });
     return;
-  }
-  if (data.password) {
-    data.password = data.password.toString();
   }
   if (data.balance) {
     data.balance = parseFloat(data.balance);
@@ -122,11 +119,11 @@ router.post("/device/:id", (req, res) => {
   }
   const sql =
     `UPDATE devices SET
-      used = 'TRUE',
+      used = TRUE,
       username = ?
       WHERE id = ? `;
   const data = {
-    name: req.body.username.toString(),
+    name: req.body.username,
     id: req.params.id
   }
   const params = [data.name, data.id];
@@ -141,6 +138,58 @@ router.post("/device/:id", (req, res) => {
       res.status(400).json({ "error": "No user: " + data.name });
       return;
     }
+  }
+});
+
+router.put("/device/:id", (req, res) => {
+  const data = {
+    password: req.body.password,
+    used: req.body.used,
+    user: req.body.username,
+    time: req.body.time_remained
+  }
+  console.log(data)
+  const isEmpty = Object.values(data).every(x => x === undefined);
+  if (isEmpty) {
+    res.status(400).json({ "error": "No key specified" });
+    return;
+  }
+  if (data.used) {
+    data.used = parseInt(data.used);
+  }
+  if (data.time) {
+    data.time = parseInt(data.time);
+  }
+  if (data.user) {
+    data.user = JSON.parse(data.user);
+    const sql = `UPDATE devices SET
+      password = COALESCE(?, password),
+      used = COALESCE(?, used),
+      username = ?,
+      time_remained = COALESCE(?, time_remained)
+      WHERE id = ?`;
+    const params = [data.password, data.used, data.user, data.time, req.params.id];
+    db.pragma("foreign_keys = OFF");
+    const info = db.prepare(sql).run(params);
+    db.pragma("foreign_keys = ON");
+    res.json({
+      "message": "success",
+      "data": data,
+      "changes": info.changes
+    });
+  } else {
+    const sql = `UPDATE devices SET
+      password = COALESCE(?, password),
+      used = COALESCE(?, used),
+      time_remained = COALESCE(?, time_remained)
+      WHERE id = ?`;
+    const params = [data.password, data.used, data.time, req.params.id];
+    const info = db.prepare(sql).run(params);
+    res.json({
+      "message": "success",
+      "data": data,
+      "changes": info.changes
+    });
   }
 });
 

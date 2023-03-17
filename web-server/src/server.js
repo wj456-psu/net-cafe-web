@@ -3,6 +3,7 @@ const cors = require("cors");
 const conf = require("./config");
 const api = require("./api");
 const app = express();
+const timer = require("./timer");
 
 app.use(cors());
 
