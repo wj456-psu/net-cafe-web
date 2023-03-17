@@ -4,7 +4,7 @@ setInterval(() => {
     axios.get("http://localhost:8080/api/devices").then((response) => {
         const devices_data = response.data.data;
         devices_data.forEach((device) => {
-            console.log(`id: ${device.id}, password: ${device.password}, used: ${device.used}, username: ${device.username}, time_remained: ${device.time_remained}`);
+            console.log(`id: ${device.id}, used: ${device.used}, username: ${device.username}, time_remained: ${device.time_remained}`);
             if (parseInt(device.used) == 1) {
                 device.time_remained = parseInt(device.time_remained);
                 device.time_remained--;
