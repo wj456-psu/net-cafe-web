@@ -18,8 +18,8 @@ export default function Login() {
         event.preventDefault();
         axios.get('http://localhost:8080/api/users')
             .then(response => {
-                const users = response.data;
-                const foundUser = users.data.find(user => user.username === username && user.password === password);
+                const users = response.data.data;
+                const foundUser = users.find(user => user.username === username && user.password === password);
                 console.log(foundUser);
                 if (foundUser) {
                     const isAdmin = foundUser.hasOwnProperty("isAdmin") && foundUser["isAdmin"] === 1;
@@ -30,7 +30,8 @@ export default function Login() {
                     }
                     else {
                         console.log("foundUser");
-                        navigate(`/User/${username}`);
+                        console.log('state',{state: { username }});
+                        navigate(`/User`, {state: { username }});
                     }
                 } else {
                     console.log("notFound");
