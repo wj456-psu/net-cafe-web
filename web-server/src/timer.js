@@ -7,8 +7,8 @@ setInterval(() => {
             console.log(`id: ${device.id}, used: ${device.used}, username: ${device.username}, time_remained: ${device.time_remained}`);
             if (parseInt(device.used) == 1) {
                 device.time_remained = parseInt(device.time_remained);
-                device.time_remained--;
                 if (device.time_remained > 0) {
+                    device.time_remained--;
                     axios.put(`http://localhost:8080/api/device/${device.id}`, {
                         "time_remained": device.time_remained
                     }).then(response => {
