@@ -31,14 +31,20 @@ router.get("/users", (req, res) => {
 });
 
 router.get("/user/:name", (req, res) => {
-  const sql = "SELECT * FROM users WHERE username = ?";
+  let sql = "SELECT * FROM users WHERE username = ?";
   const params = [req.params.name];
   const user = db.prepare(sql).get(params);
   if (!user) {
     res.status(404).json({ "error": "No user found with the specified username" });
     return;
   }
-  res.json({ "message": "success", "data": user });
+  sql = "SELECT * FROM devices WHERE username = ?";
+  const used = db.prepare(sql).get(params);
+  if (!used) {
+    res.json({ "message": "success", "data": user });
+  } else {
+    res.json({ "message": "success", "data": { user, "using": { "id": used.id, "time_remained": used.time_remained } } });
+  }
 });
 
 router.get("/goods", (req, res) => {
