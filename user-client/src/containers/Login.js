@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 export default function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     function validateForm() {
@@ -16,6 +17,7 @@ export default function Login() {
 
     function handleSubmit(event) {
         event.preventDefault();
+        setIsLoading(true);
         axios.get('http://localhost:8080/api/users')
             .then(response => {
                 const users = response.data.data;
@@ -30,18 +32,20 @@ export default function Login() {
                     }
                     else {
                         console.log("foundUser");
-                        console.log('state',{state: { username }});
-                        navigate(`/User`, {state: { username }});
+                        console.log('state', { state: { username } });
+                        navigate(`/User`, { state: { username } });
                     }
                 } else {
                     console.log("notFound");
-                    alert("Incorrect username or password. Please try again.");
+                    alert("Invalid username or password. Please try again.");
                 }
+                setIsLoading(false);
             })
     }
 
     return (
         <div className="Login">
+            <h1>Net Cafe</h1>
             <Form onSubmit={handleSubmit}>
                 <Form.Group size="lg" controlId="username">
                     <Form.Label>Username</Form.Label>
@@ -60,9 +64,12 @@ export default function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </Form.Group>
+                <Form.Group controlId="rememberMe">
+                    <Form.Check type="checkbox" label="Remember Me" />
+                </Form.Group>
                 <div className="mt-4 d-grid gap-2">
-                    <Button variant="dark" size="lg" type="submit" disabled={!validateForm()}>
-                        Login
+                    <Button variant="dark" size="lg" type="submit" disabled={!validateForm() || isLoading}>
+                        {isLoading ? 'Logging in...' : 'Login'}
                     </Button>
                 </div>
             </Form>
