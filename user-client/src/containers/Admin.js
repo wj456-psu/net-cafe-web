@@ -35,7 +35,9 @@ export default function Admin() {
   };
 
   function handleBalanceChange(event) {
-    setBalance(event.target.value);
+    const value = event.target.value.replace(/[^0-9.]/g, '');
+    const inputBalance = parseFloat(value);
+    setBalance(inputBalance);
   };
 
   function handlePasswordChange(event) {
@@ -43,11 +45,13 @@ export default function Admin() {
   };
 
   function handleDeviceChange(event) {
-    setDevice(event.target.value);
+    const value = event.target.value.replace(/\D/g, '');
+    setDevice(value);
   };
 
   function handleTimeChange(event) {
-    setTime(event.target.value);
+    const value = event.target.value.replace(/\D/g, '');
+    setTime(value);
   };
 
   function handleTopUp(event) {
@@ -113,7 +117,9 @@ export default function Admin() {
 
   return (
     <div>
-      <h1>Devices Status</h1>
+      <div className="data-Topic">
+        <h1>Devices Status</h1>
+      </div>
       <div className="data-container">
         {devices.map(device => (
           <div key={device.id} className="data-box">
@@ -129,7 +135,7 @@ export default function Admin() {
         <input type="text" id="username" name="username" value={username} onChange={handleUsernameChange} />
         <br />
         <label htmlFor="amount">Amount</label>
-        <input type="number" id="amount" name="amount" value={balance} onChange={handleBalanceChange} />
+        <input type="text" id="amount" name="amount" value={balance} onChange={handleBalanceChange} />
         <br />
         <button onClick={handleTopUp}>Enter</button>
       </div>
@@ -151,10 +157,10 @@ export default function Admin() {
         <input type="text" id="username" name="username" value={username} onChange={handleUsernameChange} />
         <br />
         <label htmlFor="device">Device</label>
-        <input type="int" id="device" name="device" value={device} onChange={handleDeviceChange} />
+        <input type="text" id="device" name="device" value={device} onChange={handleDeviceChange} />
         <br />
         <label htmlFor="time">Time</label>
-        <input type="int" id="time" name="time" value={time} onChange={handleTimeChange} />
+        <input type="text" id="time" name="time" value={time} onChange={handleTimeChange} />
         <br />
         <button onClick={handleReserve}>Enter</button>
       </div>
