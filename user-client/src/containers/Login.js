@@ -40,7 +40,11 @@ export default function Login() {
                     alert("Invalid username or password. Please try again.");
                 }
                 setIsLoading(false);
-            })
+            }).catch(err => {
+                console.error(err);
+                alert("Can't connect to server!");
+                setIsLoading(false);
+            });
     }
 
     return (
@@ -63,9 +67,6 @@ export default function Login() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                </Form.Group>
-                <Form.Group controlId="rememberMe">
-                    <Form.Check type="checkbox" label="Remember Me" />
                 </Form.Group>
                 <div className="mt-4 d-grid gap-2">
                     <Button variant="dark" size="lg" type="submit" disabled={!validateForm() || isLoading}>

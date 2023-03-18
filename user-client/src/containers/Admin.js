@@ -11,24 +11,24 @@ export default function Admin() {
   const [time, setTime] = useState("");
 
   useEffect(() => {
-    axios.get('http://localhost:8080/api/devices')
-      .then(response => {
-        setDevices(response.data.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, []);
+    const fetchData = () => {
+      axios.get('http://localhost:8080/api/devices')
+        .then(response => {
+          setDevices(response.data.data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    };
 
-  setInterval(() => {
-    axios.get('http://localhost:8080/api/devices')
-      .then(response => {
-        setDevices(response.data.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, 10000);
+    fetchData(); // Fetch data on component mount
+
+    const interval = setInterval(() => {
+      fetchData(); // Fetch data every 5 seconds
+    }, 5000); // Time interval in milliseconds (5 seconds)
+
+    return () => clearInterval(interval); // Clear interval on unmount
+  }, []);
 
   function handleUsernameChange(event) {
     setUsername(event.target.value);
@@ -73,6 +73,10 @@ export default function Admin() {
       alert("Register Successfully!");
     }).catch(error => {
       console.error(error);
+      const message = error.response.data.error;
+      if (message === 'UNIQUE constraint failed: users.username') {
+        alert(`Already registered user ${username}`);
+      }
     });
   };
 
