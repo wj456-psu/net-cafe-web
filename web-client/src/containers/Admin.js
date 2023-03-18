@@ -35,9 +35,10 @@ export default function Admin() {
   };
 
   function handleBalanceChange(event) {
-    const value = event.target.value.replace(/[^0-9.]/g, '');
-    const inputBalance = parseFloat(value);
-    setBalance(inputBalance);
+    const inputValue = event.target.value;
+    if (/^[+-]?\d*(\.\d*)?$/.test(inputValue)) {
+      setBalance(inputValue);
+    }
   };
 
   function handlePasswordChange(event) {
@@ -56,15 +57,21 @@ export default function Admin() {
 
   function handleTopUp(event) {
     event.preventDefault();
-    axios.put(`http://localhost:8080/api/user/${username}`, {
-      "username": username,
-      "balance": balance
-    }).then(response => {
-      console.log(response.data);
-      alert("Top up successfully!");
+    axios.get(`http://localhost:8080/api/user/${username}`).then(response => {
+      let totalbalance = parseFloat(response.data.data.balance);
+      totalbalance += parseFloat(balance);
+      axios.put(`http://localhost:8080/api/user/${username}`, {
+        "balance": totalbalance
+      }).then(response => {
+        console.log(response.data);
+        alert("Top up successfully!");
+      }).catch(error => {
+        console.error(error);
+      });
     }).catch(error => {
       console.error(error);
-    });
+      alert("Invalid username or password. Please try again.");
+    })
   };
 
   function handleRegister(event) {
@@ -86,32 +93,40 @@ export default function Admin() {
 
   function handleReserve(event) {
     event.preventDefault();
-    axios.post(`http://localhost:8080/api/device/${device}`, {
-      "username": username
-    }).then(response => {
-      axios.put(`http://localhost:8080/api/device/${device}`, {
-        "time_remained": (time * 60)
+    axios.get(`http://localhost:8080/api/user/${username}`).then(response => {
+      console.log(response.data);
+      const balance = response.data.data.balance;
+      let nextBalance = balance - (time / 6);
+      if (nextBalance < 0) {
+        alert("Not enough money! Please TOP-UP!");
+        return;
+      }
+      axios.put(`http://localhost:8080/api/user/${username}`, {
+        "balance": nextBalance
       }).then(response => {
-        axios.get(`http://localhost:8080/api/user/${username}`).then(response => {
-          let balance = response.data.data.balance;
-          balance -= (time / 6);
-          axios.put(`http://localhost:8080/api/user/${username}`, {
-            "balance": balance
+        console.log(response.data);
+        axios.post(`http://localhost:8080/api/device/${device}`, {
+          "username": username
+        }).then(response => {
+          console.log(response.data);
+          axios.put(`http://localhost:8080/api/device/${device}`, {
+            "time_remained": (time * 60)
           }).then(response => {
             console.log(response.data);
             alert("Reserve Successfully!");
-          }).catch(error => {
+          }
+          ).catch(error => {
             console.error(error);
           });
         }).catch(error => {
           console.error(error);
         });
-      }
-      ).catch(error => {
+      }).catch(error => {
         console.error(error);
       });
     }).catch(error => {
       console.error(error);
+      alert("Invalid username or password. Please try again.");
     });
   };
 
@@ -159,7 +174,7 @@ export default function Admin() {
         <label htmlFor="device">Device</label>
         <input type="text" id="device" name="device" value={device} onChange={handleDeviceChange} />
         <br />
-        <label htmlFor="time">Time</label>
+        <label htmlFor="time">Time (min)</label>
         <input type="text" id="time" name="time" value={time} onChange={handleTimeChange} />
         <br />
         <button onClick={handleReserve}>Enter</button>

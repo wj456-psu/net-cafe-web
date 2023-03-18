@@ -10,14 +10,21 @@ export default function User() {
   const user = useLocation();
 
   useEffect(() => {
-    axios.get(`http://localhost:8080/api/user/${user.state.username}`)
-      .then(response => {
-        setUser(response.data.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }, [user.state.username]);
+    const fetchData = (username) => {
+      axios.get(`http://localhost:8080/api/user/${username}`)
+        .then(response => {
+          setUser(response.data.data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    };
+    fetchData(user.state.username);
+    const interval = setInterval(() => {
+      fetchData(user.state.username);
+    }, 5000);
+    return () => clearInterval(interval);
+  }, [user.state.username, selectedItem]);
 
   useEffect(() => {
     async function getPhotos() {
@@ -37,18 +44,30 @@ export default function User() {
 
   const handleOrder = () => {
     // Subtract the selected item price from the user's balance
-    const newBalance = userData.balance - selectedItem.price;
-    // Send the order to the server
-    axios.post('http://localhost:8080/api/order', {
-      username: userData.username,
-      item: selectedItem
-    })
-    .then(response => {
-      alert('Your order has been placed!');
-    })
-    .catch(error => {
-      console.error(error.response);
-      alert('There was an error placing your order. Please try again later.');
+    const nextBalance = userData.balance - selectedItem.price;
+    if (nextBalance < 0) {
+      alert("Not enough money! Please TOP-UP!");
+      return;
+    }
+    if (selectedItem.left === 0) {
+      alert("Item not in stock!");
+      return;
+    }
+    selectedItem.left--;
+    axios.put(`http://localhost:8080/api/user/${user.state.username}`, {
+      "balance": nextBalance
+    }).then(response => {
+      console.log(response.data);
+      axios.put(`http://localhost:8080/api/good/${selectedItem.id}`, {
+        "left": selectedItem.left
+      }).then(response => {
+        console.log(response.data);
+        alert('Your order has been placed!');
+      }).catch(error => {
+        console.error(error);
+      })
+    }).catch(error => {
+      console.error(error);
     });
     // Clear the selected item
     setSelectedItem(null);
@@ -69,12 +88,13 @@ export default function User() {
           <div className="item" key={photo.id}>
             <img
               src={photo.img}
-              alt={`Photo ${index}`}
+              alt={`item ${index}`}
               className={selectedItem === photo ? 'selected' : ''}
               onClick={() => handleSelect(photo)}
             />
             <p>{photo.name}</p>
             <p>{photo.price}</p>
+            <p>In stock: {photo.left}</p>
           </div>
         ))}
       </div>

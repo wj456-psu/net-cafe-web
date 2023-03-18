@@ -58,6 +58,7 @@ export default function Login() {
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        className="my-input"
                     />
                 </Form.Group>
                 <Form.Group size="lg" controlId="password">
@@ -69,7 +70,7 @@ export default function Login() {
                     />
                 </Form.Group>
                 <div className="mt-4 d-grid gap-2">
-                    <Button variant="dark" size="lg" type="submit" disabled={!validateForm() || isLoading}>
+                    <Button size="lg" type="submit" disabled={!validateForm() || isLoading}>
                         {isLoading ? 'Logging in...' : 'Login'}
                     </Button>
                 </div>

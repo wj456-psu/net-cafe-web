@@ -1,49 +1,60 @@
 .Login {
-    max-width: 400px;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    background-color: #fff;
-  }
-  
-  .Login form {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .Login label {
-    margin-bottom: 5px;
-  }
-  
-  .Login input {
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-    background-color: #f0f0f0;
-    margin-bottom: 20px;
-  }
-  
-  .Login button[type="submit"] {
-    background-color: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
-  }
-  
-  .Login button[type="submit"]:hover {
-    background-color: #218838;
-  }
-  
-  .Login .alert {
-    margin-top: 20px;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #dc3545;
-    color: #dc3545;
-    background-color: #f8d7da;
-  }
-  
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  background-color: #ffffff;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.Login form {
+  display: flex;
+  flex-direction: column;
+}
+
+.Login label {
+  margin-bottom: 5px;
+}
+
+.Login .my-input {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #f0f0f0;
+  margin-bottom: 20px;
+}
+
+.Login input {
+  padding: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #f0f0f0;
+  margin-bottom: 20px;
+}
+
+.Login button[type="submit"] {
+  background-color: #28a745;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.Login button[type="submit"]:hover {
+  background-color: #218838;
+}
+
+.Login .alert {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #dc3545;
+  color: #dc3545;
+  background-color: #f8d7da;
+}
