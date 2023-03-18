@@ -1,33 +1,28 @@
-const axios = require("axios");
+const db = require("./db");
+
+function readDevices() {
+    const sql = `SELECT * from devices`;
+    const params = [];
+    const devices = db.prepare(sql).all(params);
+    devices.forEach((device) => {
+        console.log(`id: ${device.id}, used: ${device.used}, username: ${device.username}, time_remained: ${device.time_remained}`);
+        if (device.used == 1) {
+            if (device.time_remained > 0) {
+                device.time_remained--;
+                const sql2 = `UPDATE devices SET time_remained = ? WHERE id = ?`;
+                const params2 = [device.time_remained, device.id];
+                const info2 = db.prepare(sql2).run(params2);
+                console.log(info2);
+            } else {
+                const sql3 = `UPDATE devices SET used = 0, username = NULL WHERE id = ?`
+                const params3 = [device.id];
+                const info3 = db.prepare(sql3).run(params3);
+                console.log(info3);
+            }
+        }
+    });
+}
 
 setInterval(() => {
-    axios.get("http://localhost:8080/api/devices").then((response) => {
-        const devices_data = response.data.data;
-        devices_data.forEach((device) => {
-            console.log(`id: ${device.id}, used: ${device.used}, username: ${device.username}, time_remained: ${device.time_remained}`);
-            if (parseInt(device.used) == 1) {
-                device.time_remained = parseInt(device.time_remained);
-                if (device.time_remained > 0) {
-                    device.time_remained--;
-                    axios.put(`http://localhost:8080/api/device/${device.id}`, {
-                        "time_remained": device.time_remained
-                    }).then(response => {
-                        console.log(`id: ${device.id} -> ${JSON.stringify(response.data, null, 2)}`);
-                    }).catch(error => {
-                        console.error(error);
-                    });
-                } else {
-                    axios.put(`http://localhost:8080/api/device/${device.id}`, {
-                        "used": 0,
-                        "username": "null",
-                        "time_remained": device.time_remained
-                    }).then(response => {
-                        console.log(`id: ${device.id} -> ${JSON.stringify(response.data, null, 2)}`);
-                    }).catch(error => {
-                        console.error(error);
-                    });
-                }
-            }
-        });
-    }).catch((err) => { });
+    readDevices();
 }, 1000);
