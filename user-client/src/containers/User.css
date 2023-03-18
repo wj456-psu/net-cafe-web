@@ -1,45 +1,159 @@
-.user-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: #f5f5f5;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 50px;
-  }
-  
-  .user-info {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .user-info h2 {
-    margin-bottom: 10px;
-  }
-  
-  .user-info p {
-    margin: 5px;
-  }
-  
-  .snack-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    margin-top: 20px;
-  }
-  
-  .snack-container img {
-    margin: 10px;
-    max-width: 200px;
-    max-height: 200px;
-  }
-  
-  .snack-container img.focused {
-    border: 5px solid #007bff;
-  }
-  
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2&display=swap');
+
+/* Common styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Baloo 2', cursive;
+}
+
+h1 {
+  font-size: 3rem;
+  margin-top: 3rem;
+}
+
+h2 {
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+}
+
+p {
+  font-size: 1.5rem;
+  margin: 1rem 0;
+}
+
+/* Container styles */
+.container {
+  float: left;
+}
+
+.status {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.item {
+  margin: 10px auto;
+  padding: 10px;
+  background-color: #fff;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+}
+
+.item img {
+  width: 20%;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+}
+
+.item p {
+  font-size: 20px;
+  margin-bottom: 5px;
+}
+
+.item:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+.selected {
+  border: 5px solid #c94c4c;
+}
+
+/* Items container styles */
+.items-container {
+  position: absolute;
+  top: 20px;
+  right: 1000px;
+  width: 400px;
+  height: 100%;
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  max-height: 700px; /* set the maximum height */
+  overflow-y: scroll; /* add scroll bar when the height exceeds the max height */
+  background-color: #f5f5f5;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Selected item styles */
+.selected-item {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f5f5f5;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.selected-item h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.selected-item img {
+  display: block;
+  width: 50%;
+  margin: 20px auto;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+}
+
+.selected-item p {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.confirm-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #c94c4c;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s ease-in-out;
+}
+
+.confirm-btn:hover {
+  background-color: #b54444;
+}
+
+.balance {
+  display: block;
+}
+
+.time {
+  display: block;
+}
