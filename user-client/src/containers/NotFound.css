@@ -1,3 +1,25 @@
 .NotFound {
-  padding-top: 100px;
+  margin: auto;
+  max-width: 500px;
+  padding: 50px;
+  text-align: center;
 }
+
+h1 {
+  font-size: 3em;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 2em;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+p {
+  font-size: 1.2em;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
